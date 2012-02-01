@@ -122,6 +122,15 @@ You can insert nodes as children of a parent node at either the end or optional 
 
     tax.insert(child, parent._id, 2);
 
+
+## Updating nodes
+
+You can update a node's data property by passing the node's ID and the new data value:
+
+    var match = tax.update(bnode._id, 'newval');
+    var find  = tax.find(bnode._id);
+    find.data.should.eql('newval');
+
 ## Removing nodes
 
 You can remove a node by passing in it's id. Subsequently, the deleted node's parent's isLeaf property will go from being true to false (if deleted node was parent's only child of course!)
