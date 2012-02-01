@@ -109,6 +109,30 @@ describe('Taxonomy', function() {
             done();
         });
     });
+    describe('Update node', function() {
+        it('should be able to update a node\'s data property', function(done) {
+            var anode = tax.createNode(['leaf'], 'foo');
+            var bnode = tax.createNode(['leaf2'], 'bar');
+            tax.addNode(anode, null);
+            tax.addNode(bnode, anode);
+            var match = tax.update(bnode._id, 'newval');
+            var find  = tax.find(bnode._id);
+            find.data.should.eql('newval');
+            // Try a more deeply nested node
+            var i, n, arr;
+            arr = [];
+            for(i=1; i<=10;i++) {
+                n = tax.createNode(null, i);
+                tax.addNode(n, arr.pop());
+                arr.push(n);
+            }
+            var lastnode = arr.pop();
+            var lastid = lastnode._id;
+            tax.update(lastid, 'yoyoyo');
+            tax.find(lastid).data.should.eql('yoyoyo');
+            done();
+        });
+    });
 
     describe('Visit related operations', function() {
         it('should be able to find a child in node by id', function(done) {
