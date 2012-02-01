@@ -1,4 +1,4 @@
-_taxonomy_ is a library for manipulating tree structures in [node](http://nodejs.org). The tree object it creates can be used with jstree on the front end if so desired. Because it tries to be interoperable with jstree, the root.data property on the tree itself is an array of objects.
+_taxonomy_ is a library for manipulating a tree structure that's suitable for rendering jstree tree views on the front end. It environment is [node](http://nodejs.org). Although the author implemented for jstree interoperability, it could be used wherever it's tree structure is satisfactory (the tree is essentially a combination of node object literals that have optional children arrays).
 
 ## Example
 
