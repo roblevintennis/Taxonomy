@@ -11,7 +11,7 @@
     },
     "repository" : {
         "type" : "git",
-        "url" : "git@github.com:roblevintennis/Taxonomy.git"
+        "url" : "git://github.com/roblevintennis/Taxonomy.git"
     },
     "keywords": ["tree", "jstree", "taxonomy", "structure"],
     "main": "./lib/taxonomy.js",
