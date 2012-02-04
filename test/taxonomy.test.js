@@ -1,5 +1,5 @@
 var should = require('should');
-var tax    = require('../lib/taxonomy.js');
+var tax    = require('../lib/node/taxonomy.js');
 
 // To run:
 // <path>/taxonomy $ mocha -R list
