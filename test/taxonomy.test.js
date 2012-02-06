@@ -63,12 +63,20 @@ describe('Taxonomy', function() {
             done();
         });
     });
-
     describe('Create node', function() {
         it('should be able to create a node with data and children', function(done) {
             var anode = tax.createNode(['foo','bar','baz'], 'some data');
             anode.should.have.property("data", "some data");
             anode.children.should.eql(['foo','bar','baz']);
+            done();
+        });
+        it('should add a default slug attr when creating node with legal chars', function(done) {
+            var anode = tax.createNode(null, 'My Cool Data');
+            anode.attr.should.have.property("data-slug", "my-cool-data");
+            anode = tax.createNode(null, 'My     Data      With lots Of  SPaCeS!');
+            anode.attr.should.have.property("data-slug","my-data-with-lots-of-spaces");
+            anode = tax.createNode(null, '^^^REMOVE!!!Ill3gal$s*&^%$#@!~');
+            anode.attr.should.have.property('data-slug','removeill3gals');
             done();
         });
         it('should be able to create a node and any arbitrary properties should be presevered', function(done) {
@@ -77,7 +85,7 @@ describe('Taxonomy', function() {
                  "state":"closed", 
                  "metadata" : "a string, array, object, etc",
                  "title" : "My TiTle" });
-            anode.attr.should.eql({'href':'#','id':'me_id'});
+            anode.attr.should.eql({'href':'#','id':'me_id', 'data-slug':'mydata'});
             // following tests that user defined attr.id takes precendence over auto
             // generated node._id
             anode._id.should.eql('me_id');
