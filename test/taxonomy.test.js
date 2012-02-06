@@ -78,6 +78,9 @@ describe('Taxonomy', function() {
                  "metadata" : "a string, array, object, etc",
                  "title" : "My TiTle" });
             anode.attr.should.eql({'href':'#','id':'me_id'});
+            // following tests that user defined attr.id takes precendence over auto
+            // generated node._id
+            anode._id.should.eql('me_id');
             anode.state.should.eql('closed');
             anode.metadata.should.eql('a string, array, object, etc');
             anode.title.should.eql('My TiTle');
