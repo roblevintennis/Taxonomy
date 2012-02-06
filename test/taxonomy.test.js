@@ -87,6 +87,18 @@ describe('Taxonomy', function() {
             tree[0].children[3].should.have.property('data','bar');
             done();
         });
+        it('should create unique IDs if same node is added to two sub trees', function(done) {
+            var anode = tax.createNode(null, 'A');
+            var bnode = tax.createNode(null, 'B');
+            var cnode = tax.createNode(null, 'C');
+            // add roots
+            tax.addNode(anode);
+            tax.addNode(bnode);
+            var a = tax.addNode(cnode, anode);
+            var b = tax.addNode(cnode, bnode);
+            a._id.should.not.eql(b._id);
+            done();
+        });
         it('should be disallow adding node that has no data: property', function(done) {
             var nodata = null;
             // Can't create node with no data property
