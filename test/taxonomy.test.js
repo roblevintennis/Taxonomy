@@ -82,6 +82,11 @@ describe('Taxonomy', function() {
             anode.attr.should.have.property("data-slug", "slugs-are-cool");
             done();
         });
+        it('should trim user defined slug attr', function(done) {
+            var anode = tax.createNode(null, 'My Cool Data', {attr:{'data-slug':'     spaces-slug           '}});
+            anode.attr.should.have.property("data-slug", "spaces-slug");
+            done();
+        });
         it('should add a default slug attr when creating node with legal chars', function(done) {
             var anode = tax.createNode(null, 'My Cool Data');
             anode.attr.should.have.property("data-slug", "my-cool-data");
