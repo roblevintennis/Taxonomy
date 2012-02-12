@@ -77,6 +77,11 @@ describe('Taxonomy', function() {
             anode.children.should.eql(['foo','bar','baz']);
             done();
         });
+        it('should keep user defined slug attr when supplied and default should NOT overwrite', function(done) {
+            var anode = tax.createNode(null, 'My Cool Data', {attr:{'data-slug':'slugs-are-cool'}});
+            anode.attr.should.have.property("data-slug", "slugs-are-cool");
+            done();
+        });
         it('should add a default slug attr when creating node with legal chars', function(done) {
             var anode = tax.createNode(null, 'My Cool Data');
             anode.attr.should.have.property("data-slug", "my-cool-data");
