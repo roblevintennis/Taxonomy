@@ -62,6 +62,13 @@ describe('Taxonomy', function() {
             roots[1].attr.id.should.not.eql('bogus');
             done();
         });
+        it('should allow you to set the tree', function(done) {
+			var t = {"data":['foo', 'bar', 'baz']};
+            var tree = tax.setTree(t);
+			tree.data[0].should.eql('foo');
+			tree.data[2].should.eql('baz');
+            done();
+        });
     });
     describe('Create node', function() {
         it('should be able to create a node with data and children', function(done) {
