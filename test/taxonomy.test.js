@@ -188,6 +188,33 @@ describe('Taxonomy', function() {
 			updatedNode.data.should.eql('updated_node_data');
             done();
         });
+        it('should be able to move a node', function(done) {
+            var parent = tax.createNode(null, 'p1');
+            var parent2 = tax.createNode(null, 'p2');
+            tax.addNode(parent, null);
+            tax.addNode(parent2, null);
+			var anode = tax.createNode(null, 'ANode', 
+				{attr:{'data-slug':'original-slug', 'data-desc':'original desc'}});
+            tax.addNode(anode, parent);
+            var movedNode = tax.move(anode, parent2._id);
+            var p2 = tax.find(parent2._id);
+			var foundMatch = false;
+			for(var i=0;i<p2.children.length;i++) {
+				if(p2.children[i]._id === movedNode._id) foundMatch = true;
+			}
+			foundMatch.should.eql(true);
+
+			// now move back to original parent and check again
+            movedNode = tax.move(anode, parent._id);
+            var p = tax.find(parent._id);
+			foundMatch = false;
+			for(var j=0;j<p.children.length;j++) {
+				if(p.children[j]._id === movedNode._id) foundMatch = true;
+			}
+			foundMatch.should.eql(true);
+
+            done();
+        });
     });
 
     describe('Visit related operations', function() {
