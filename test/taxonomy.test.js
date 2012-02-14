@@ -225,7 +225,23 @@ describe('Taxonomy', function() {
             pc.parent.should.eql(parent);
             done();
         });
-        it('should be able to insert node object', function(done) {
+        it('should remove root nodes', function(done) {
+            var parent = tax.createNode(null, 'p1');
+            var parent2 = tax.createNode(null, 'p2');
+            var parent3 = tax.createNode(null, 'p3');
+            tax.addNode(parent, null);
+            tax.addNode(parent2, null);
+            tax.addNode(parent3, null);
+            var removed = tax.remove(parent2._id);
+            removed.should.eql(true);
+            removed = tax.remove(parent3._id);
+            removed.should.eql(true);
+            removed = tax.remove(parent._id);
+            removed.should.eql(true);
+			tax.getRoots().should.eql([]);
+            done();
+        });
+        it('should be able to insert then remove node object', function(done) {
             var parent = tax.createNode(['foo','bar','qux'], 'some data');
             tax.addNode(parent, null);
             var child = tax.createNode(['bar'],'bar data');
