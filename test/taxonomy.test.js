@@ -172,6 +172,22 @@ describe('Taxonomy', function() {
             tax.find(lastid).data.should.eql('yoyoyo');
             done();
         });
+
+        it('should be able to update a node\'s extended properties', function(done) {
+			var anode = tax.createNode(null, 'ANode', 
+				{attr:{'data-slug':'original-slug', 'data-desc':'original desc'}});
+            tax.addNode(anode, null);
+			var clone = JSON.parse(JSON.stringify(anode));
+			clone.data = 'updated_node_data';
+			clone.attr['data-slug'] = 'updated-slug';
+			clone.attr['data-desc'] = 'updated desc';
+
+            var updatedNode = tax.updateNode(anode._id, clone);
+            updatedNode.attr.should.have.property("data-slug", "updated-slug");
+            updatedNode.attr.should.have.property("data-desc", "updated desc");
+			updatedNode.data.should.eql('updated_node_data');
+            done();
+        });
     });
 
     describe('Visit related operations', function() {
