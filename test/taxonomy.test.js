@@ -380,6 +380,19 @@ describe('Taxonomy', function() {
             id.should.eql(lastid);
             done();
         });
-		
+        it('should find id by path for subsequent root nodes', function(done) {
+            var p    = tax.createNode(null, "parent");
+            var p2    = tax.createNode(null, "parent2");
+            var p3    = tax.createNode(null, "parent3");
+            var c    = tax.createNode(null, "child");
+            var g    = tax.createNode(null, "grandchild");
+            tax.addNode( g, tax.addNode(c, tax.addNode(p, null)));
+            tax.addNode( p2, null);
+            tax.addNode( p3, null);
+            var path = '/parent2';
+			var id = tax.findByPath(path);
+            id.should.eql(p2._id);
+            done();
+        });
     });
 });
