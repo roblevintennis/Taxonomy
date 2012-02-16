@@ -357,5 +357,29 @@ describe('Taxonomy', function() {
             path.should.eql('/1/2/3/4/5/6/7/8/9/');
             done();
         });
+        it('should find by path', function(done) {
+            var p    = tax.createNode(null, "parent");
+            var c    = tax.createNode(null, "child");
+            var g    = tax.createNode(null, "grandchild");
+            tax.addNode( g, tax.addNode(c, tax.addNode(p, null)));
+            var path = '/parent/child/grandchild/';
+			var id = tax.findByPath(path);
+            id.should.eql(g._id);
+            done();
+        });
+        it('should be able to return id even when the path is deeply nested', function(done) {
+            var path = null, i, n, arr;
+            arr = [];
+            for(i=1; i<10;i++) {
+                n = tax.createNode(null, i);
+                tax.addNode(n, arr.pop());
+                arr.push(n);
+            }
+            var id = tax.findByPath('/1/2/3/4/5/6/7/8/9');
+            var lastid = arr.pop()._id;
+            id.should.eql(lastid);
+            done();
+        });
+		
     });
 });
