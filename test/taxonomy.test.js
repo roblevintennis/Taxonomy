@@ -1,5 +1,6 @@
 var should = require('should');
 var tax    = require('../lib/node/taxonomy.js');
+var sinon  = require('sinon');
 
 // To run:
 // <path>/taxonomy $ mocha -R list
@@ -395,4 +396,162 @@ describe('Taxonomy', function() {
             done();
         });
     });
+
+    describe('Walk related operations', function() {
+        it('should callback start_el, end_el, start_lvl, and end_lvl', function(done) {
+			var startElSpy     = sinon.spy();
+			var startLvlSpy    = sinon.spy();
+			var endElSpy       = sinon.spy();
+			var endLvlSpy      = sinon.spy();
+			var notCalledSpy = sinon.spy();
+
+            var p = tax.createNode(null, 'p');
+            tax.addNode(p, null);
+            var c = tax.createNode(null, 'c');
+            tax.addNode(c, p);
+            var gc = tax.createNode(null, 'gc');
+            tax.addNode(gc, c);
+			tax.walk({
+				start_el: startElSpy,
+				end_el: endElSpy,
+				start_lvl: startLvlSpy,
+				end_lvl: endLvlSpy,
+				nonesense: notCalledSpy 
+			});
+			startElSpy.calledThrice.should.eql(true);
+			endElSpy.calledThrice.should.eql(true);
+			startLvlSpy.calledThrice.should.eql(true);
+			endLvlSpy.calledThrice.should.eql(true);
+			notCalledSpy.called.should.eql(false);
+			done();
+        });
+		it('should callback start_el, end_el, start_lvl, and end_lvl', function(done) {
+			var startElSpy     = sinon.spy();
+			var startLvlSpy    = sinon.spy();
+			var endElSpy       = sinon.spy();
+			var endLvlSpy      = sinon.spy();
+
+            var p  = tax.createNode(null, 'p');
+            var p2 = tax.createNode(null, 'p2');
+            var p3 = tax.createNode(null, 'p3');
+            var p4 = tax.createNode(null, 'p4');
+            tax.addNode(p, null);
+            tax.addNode(p2, null);
+            tax.addNode(p3, null);
+            tax.addNode(p4, null);
+            var c  = tax.createNode(null, 'c');
+            var c2 = tax.createNode(null, 'c2');
+            var c3 = tax.createNode(null, 'c3');
+            tax.addNode(c, p);
+            tax.addNode(c2, p2);
+            tax.addNode(c3, p2);
+            var gc  = tax.createNode(null, 'gc');
+            var gc2 = tax.createNode(null, 'gc2');
+            tax.addNode(gc, c);
+            tax.addNode(gc2, c2);
+			tax.walk({
+				start_el:   startElSpy,
+				end_el:     endElSpy,
+				start_lvl:  startLvlSpy,
+				end_lvl:    endLvlSpy
+			});
+
+			// Test levels
+			startLvlSpy.firstCall.args[0].should.eql(1);	
+			startLvlSpy.secondCall.args[0].should.eql(2);	
+			startLvlSpy.thirdCall.args[0].should.eql(3);	
+			endLvlSpy.lastCall.args[0].should.eql(1);	
+
+			// Test call counts
+			startElSpy.callCount.should.eql(9);
+			endElSpy.callCount.should.eql(9);
+			startLvlSpy.callCount.should.eql(5);
+			endLvlSpy.callCount.should.eql(5);
+
+			done();
+        });
+
+        it('should walking should respect maxdepth', function(done) {
+            var i, n, n2, arr, popped;
+			var startLvlSpy = sinon.spy();
+            var arr = [];
+
+            for(i=1; i<1000;i++) {
+                n  = tax.createNode(null, i);
+                n2 = tax.createNode(null, i);
+				popped = arr.pop();
+                tax.addNode(n, popped);
+                tax.addNode(n2, popped);
+                arr.push(n);
+            }
+			var maxdepth = 10;
+			tax.walk({
+				start_lvl:  startLvlSpy
+			}, maxdepth);
+			startLvlSpy.lastCall.args[0].should.eql(10);
+
+            done();
+        });
+		
+        it('should render and use defaults', function(done) {
+			var startLvlSpy = sinon.spy(),
+				arr = [];
+            var foo = tax.createNode(null, 'foo');
+            var foo2 = tax.createNode(null, 'foo2');
+            var bar = tax.createNode(null, 'bar');
+            var bar2 = tax.createNode(null, 'bar2');
+            var baz = tax.createNode(null, 'baz');
+            var baz2 = tax.createNode(null, 'baz2');
+            tax.addNode(foo, null);
+            tax.addNode(bar, foo);
+            tax.addNode(baz, bar);
+			tax.addNode(foo2, null);
+            tax.addNode(bar2, foo2);
+            tax.addNode(baz2, bar2);
+			var rendered = tax.render();
+			//console.log(rendered);
+			var f  = new RegExp('sid_' + foo._id);
+			var f2  = new RegExp('sid_' + foo2._id);
+			var b  = new RegExp('sid_' + bar._id);
+			var b2  = new RegExp('sid_' + bar2._id);
+			var bz = new RegExp('sid_' + baz._id);
+			var bz2 = new RegExp('sid_' + baz2._id);
+			f.test(rendered).should.eql(true);
+			b.test(rendered).should.eql(true);
+			bz.test(rendered).should.eql(true);
+			f2.test(rendered).should.eql(true);
+			b2.test(rendered).should.eql(true);
+			bz2.test(rendered).should.eql(true);
+			/noiamnotcrazy/i.test(rendered).should.eql(false);
+            done();
+        });
+        it('should render using supplied options', function(done) {
+			var startLvlSpy = sinon.spy(),
+				arr = [];
+            var foo = tax.createNode(null, 'foo');
+            var bar = tax.createNode(null, 'bar');
+            tax.addNode(foo, null);
+            tax.addNode(bar, foo);
+			var rendered = tax.render({
+				outerTag: 'div',
+				innerTag: 'p',
+				startPath: ''
+			});
+/*
+<div class="level-1">
+    <p class="sid_tax_21201329699355734"><a href="/#!/foo" title="View all under foo">foo</a>
+        <div class="level-2">
+            <p class="sid_tax_21211329699355734"><a href="/#!/foo/bar" title="View all under bar">bar</a></p>
+        </div>
+    </p>
+</div>
+*/
+			var f  = new RegExp('sid_' + foo._id);
+			var b  = new RegExp('sid_' + bar._id);
+			f.test(rendered).should.eql(true);
+			b.test(rendered).should.eql(true);
+            done();
+        });
+    });
+
 });
