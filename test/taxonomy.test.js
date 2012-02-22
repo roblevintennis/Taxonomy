@@ -344,6 +344,9 @@ describe('Taxonomy', function() {
             path.should.eql('/parent/child2/grandchild2/');
             path = tax.path(gg3._id);
             path.should.eql('/parent/child/grandchild/');
+			// Should be able to include section in path if true passed
+            path = tax.path(gg3._id, true, true);
+            path.should.eql('/parent/child/grandchild/ggrandchild3');
             done();
         });
         it('should be able to get the path of deeply nested node', function(done) {
@@ -366,6 +369,16 @@ describe('Taxonomy', function() {
             var path = '/parent/child/grandchild/';
 			var id = tax.findByPath(path);
             id.should.eql(g._id);
+            done();
+        });
+        it('should return null from find by path if not found', function(done) {
+            var p    = tax.createNode(null, "parent");
+            var c    = tax.createNode(null, "child");
+            var g    = tax.createNode(null, "grandchild");
+            tax.addNode( g, tax.addNode(c, tax.addNode(p, null)));
+            var path = '/parent/child/grandchild/EXTRA';
+			var id = tax.findByPath(path);
+            (id===null).should.eql(true);
             done();
         });
         it('should be able to return id even when the path is deeply nested', function(done) {
