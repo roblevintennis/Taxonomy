@@ -1,5 +1,5 @@
 var should = require('should');
-var tax    = require('../lib/node/taxonomy.js');
+var tax    = require('../lib/taxonomy.js').tax;
 var sinon  = require('sinon');
 
 // To run:

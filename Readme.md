@@ -4,7 +4,9 @@ _taxonomy_ is a library for manipulating a tree structure that's suitable for re
 
 Require taxonomy.js .. assuming in node.js env:
 
-    var tax = require('../lib/taxonomy.js');
+### Note: You must now include like: require('path/to/taxonomy.js').tax
+
+	var tax    = require('../lib/taxonomy.js').tax; // .tax important!
 
 Now build up your tree passing in the node and it's optional parent. If parent is not provided it is assumed you want the node to hang of the root of your tree:
 
